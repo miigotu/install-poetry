@@ -36,12 +36,12 @@ if echo "$config" | grep -q -c "installer.parallel"; then
   poetry config installer.parallel "$INSTALLER_PARALLEL"
 fi
 
-act="source .venv/$scripts/activate"
+act="source .venv/bin/activate"
 echo echo "VENV=.venv/bin/activate" >> "$GITHUB_ENV"
 
 cat $GITHUB_ENV
 cat $GITHUB_PATH
-ls -al "$path/$scripts"
+ls -al "$path/bin"
 
 echo -e "\n\033[33mInstallation completed. Configuring settings 🛠\033[0m"
 echo -e "\n\033[33mDone ✅\033[0m"
