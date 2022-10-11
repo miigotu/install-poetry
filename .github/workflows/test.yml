@@ -16,6 +16,11 @@ env:
   LATEST_PYTHON: "3.10"
   LATEST_POETRY: "1.2.2"
 
+concurrency:
+  # The concurrency section allows previous runs to be cancelled when commits are added or force pushed 
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
 jobs:
   # The set-env job translates our json variables to a format we
   # can use in our workflow specifications. Without this step,
@@ -123,6 +128,7 @@ jobs:
           source .github/scripts/assert.sh
           echo "$output"
           assert_in "/install-poetry/install-poetry/.venv" "$output"
+          echo "VENV=$VENV"
           source $VENV
           pytest --version
 
