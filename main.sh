@@ -8,7 +8,7 @@ curl -sSL https://install.python-poetry.org/ --output "$installation_script"
 path="$HOME/.local"
 scripts="bin" 
 if [ "${RUNNER_OS}" == "Windows" ]; then
-  path="C:/Users/runneradmin/AppData/Roaming/Python/Scripts"
+  path="C:/Users/runneradmin/AppData/Roaming/Python"
   scripts="Scripts"
 fi
 
