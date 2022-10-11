@@ -26,8 +26,11 @@ else
   POETRY_HOME=$path python3 "$installation_script" --yes --version="$VERSION" ${INSTALLATION_ARGUMENTS}
 fi
 
-echo "$path/$scripts" >> $GITHUB_PATH
-export PATH="$path/$scripts:$PATH"
+echo "$path/bin" >> $GITHUB_PATH
+export PATH="$path/bin:$PATH"
+
+echo "$path/Scripts" >> $GITHUB_PATH
+export PATH="$path/Scripts:$PATH"
 
 # Expand any "~" in VIRTUALENVS_PATH
 VIRTUALENVS_PATH=${VIRTUALENVS_PATH/#\~/$HOME}
@@ -43,7 +46,7 @@ if echo "$config" | grep -q -c "installer.parallel"; then
 fi
 
 act="source .venv/$scripts/activate"
-echo echo "VENV=.venv/$scripts/activate" >> "$GITHUB_ENV"
+echo echo "VENV=.venv/${scripts}/activate" >> "$GITHUB_ENV"
 
 cat $GITHUB_ENV
 cat $GITHUB_PATH
