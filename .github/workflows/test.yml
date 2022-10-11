@@ -128,6 +128,7 @@ jobs:
           source .github/scripts/assert.sh
           echo "$output"
           assert_in "/install-poetry/install-poetry/.venv" "$output"
+          [[ -z $VENV ]] || (echo "\$VENV var not set!" && exit 1)
           source $VENV
           pytest --version
 
