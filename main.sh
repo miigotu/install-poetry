@@ -5,14 +5,7 @@ set -eo pipefail
 installation_script="$(mktemp)"
 curl -sSL https://install.python-poetry.org/ --output "$installation_script"
 
-if [ "$RUNNER_OS" == "Windows" ]; then
-  echo "$RUNNER_OS == Windows"
-  path="C:/Users/runneradmin/AppData/Roaming/Python"
-  scripts="Scripts"
-else
-  path="$HOME/.local"
-  scripts="bin"
-fi
+path="$HOME/.local"
 
 echo -e "\n\033[33mSetting Poetry installation path as $path\033[0m\n"
 echo -e "\033[33mInstalling Poetry 👷\033[0m\n"
@@ -29,9 +22,6 @@ fi
 echo "$path/bin" >> $GITHUB_PATH
 export PATH="$path/bin:$PATH"
 
-echo "$path/Scripts" >> $GITHUB_PATH
-export PATH="$path/Scripts:$PATH"
-
 # Expand any "~" in VIRTUALENVS_PATH
 VIRTUALENVS_PATH=${VIRTUALENVS_PATH/#\~/$HOME}
 
@@ -40,13 +30,14 @@ poetry config virtualenvs.in-project "$VIRTUALENVS_IN_PROJECT"
 poetry config virtualenvs.path "$VIRTUALENVS_PATH"
 
 config="$(poetry config --list)"
+echo $config
 
 if echo "$config" | grep -q -c "installer.parallel"; then
   poetry config installer.parallel "$INSTALLER_PARALLEL"
 fi
 
 act="source .venv/$scripts/activate"
-echo echo "VENV=.venv/${scripts}/activate" >> "$GITHUB_ENV"
+echo echo "VENV=.venv/bin/activate" >> "$GITHUB_ENV"
 
 cat $GITHUB_ENV
 cat $GITHUB_PATH
