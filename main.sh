@@ -30,24 +30,14 @@ poetry config virtualenvs.in-project "$VIRTUALENVS_IN_PROJECT"
 poetry config virtualenvs.path "$VIRTUALENVS_PATH"
 
 config="$(poetry config --list)"
-echo $config
 
 if echo "$config" | grep -q -c "installer.parallel"; then
   poetry config installer.parallel "$INSTALLER_PARALLEL"
 fi
 
-#if [ "$RUNNER_OS" == "Windows" ]; then
-#  act="source .venv/Scripts/activate"
-#  echo echo "VENV=.venv/Scripts/activate" >> "$GITHUB_ENV"
-#else
 act="source .venv/bin/activate"
-echo echo "VENV=.venv/bin/activate" >> "$GITHUB_ENV"
+echo "VENV=.venv/bin/activate" >> "$GITHUB_ENV"
 export VENV=.venv/bin/activate
-#fi
-
-cat $GITHUB_ENV
-cat $GITHUB_PATH
-ls -al "$path/bin"
 
 echo -e "\n\033[33mInstallation completed. Configuring settings 🛠\033[0m"
 echo -e "\n\033[33mDone ✅\033[0m"
