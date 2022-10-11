@@ -5,10 +5,11 @@ set -eo pipefail
 installation_script="$(mktemp)"
 curl -sSL https://install.python-poetry.org/ --output "$installation_script"
 
+path="$HOME/.local"
+scripts="bin" 
 if [ "${RUNNER_OS}" == "Windows" ]; then
   path="C:/Users/runneradmin/AppData/Roaming/Python/Scripts"
-else
-  path="$HOME/.local"
+  scripts="Scripts"
 fi
 
 echo -e "\n\033[33mSetting Poetry installation path as $path\033[0m\n"
@@ -23,35 +24,24 @@ else
   POETRY_HOME=$path python3 "${installation_script}" --yes --version="${VERSION}" ${INSTALLATION_ARGUMENTS}
 fi
 
-echo "$path/bin" >>"$GITHUB_PATH"
-export PATH="$path/bin:$PATH"
-
-if [ "${RUNNER_OS}" == "Windows" ]; then
-  poetry_="$path/bin/poetry.exe"
-else
-  poetry_=poetry
-fi
+echo "$path/$scripts" >>"$GITHUB_PATH"
+export PATH="$path/$scripts:$PATH"
 
 # Expand any "~" in VIRTUALENVS_PATH
 VIRTUALENVS_PATH="${VIRTUALENVS_PATH/#\~/$HOME}"
 
-"$poetry_" config virtualenvs.create "${VIRTUALENVS_CREATE}"
-"$poetry_" config virtualenvs.in-project "${VIRTUALENVS_IN_PROJECT}"
-"$poetry_" config virtualenvs.path "${VIRTUALENVS_PATH}"
+poetry config virtualenvs.create "${VIRTUALENVS_CREATE}"
+poetry config virtualenvs.in-project "${VIRTUALENVS_IN_PROJECT}"
+poetry config virtualenvs.path "${VIRTUALENVS_PATH}"
 
-config="$("$poetry_" config --list)"
+config="$(poetry config --list)"
 
 if echo "$config" | grep -q -c "installer.parallel"; then
-  "$poetry_" config installer.parallel "${INSTALLER_PARALLEL}"
+  poetry config installer.parallel "${INSTALLER_PARALLEL}"
 fi
 
-if [ "${RUNNER_OS}" == "Windows" ]; then
-  act="source .venv/scripts/activate"
-  echo "VENV=.venv/scripts/activate" >>"$GITHUB_ENV"
-else
-  act="source .venv/bin/activate"
-  echo "VENV=.venv/bin/activate" >>"$GITHUB_ENV"
-fi
+act="source .venv/$scripts/activate"
+echo echo "VENV=.venv/$scripts/activate" >>"$GITHUB_ENV"
 
 echo -e "\n\033[33mInstallation completed. Configuring settings 🛠\033[0m"
 echo -e "\n\033[33mDone ✅\033[0m"
