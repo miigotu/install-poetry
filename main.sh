@@ -5,9 +5,8 @@ set -eo pipefail
 installation_script="$(mktemp)"
 curl -sSL https://install.python-poetry.org/ --output "$installation_script"
 
-echo "$RUNNER_OS"
-
 if [ "$RUNNER_OS" == "Windows" ]; then
+  echo "$RUNNER_OS == Windows"
   path="C:/Users/runneradmin/AppData/Roaming/Python"
   scripts="Scripts"
 else
@@ -27,7 +26,7 @@ else
   POETRY_HOME=$path python3 "$installation_script" --yes --version="$VERSION" ${INSTALLATION_ARGUMENTS}
 fi
 
-echo "$path/$scripts" >>"$GITHUB_PATH"
+echo "$path/$scripts" >> $GITHUB_PATH
 export PATH="$path/$scripts:$PATH"
 
 # Expand any "~" in VIRTUALENVS_PATH
@@ -44,7 +43,11 @@ if echo "$config" | grep -q -c "installer.parallel"; then
 fi
 
 act="source .venv/$scripts/activate"
-echo echo "VENV=.venv/$scripts/activate" >>"$GITHUB_ENV"
+echo echo "VENV=.venv/$scripts/activate" >> "$GITHUB_ENV"
+
+cat $GITHUB_ENV
+cat $GITHUB_PATH
+ls -al "$path/$scripts"
 
 echo -e "\n\033[33mInstallation completed. Configuring settings 🛠\033[0m"
 echo -e "\n\033[33mDone ✅\033[0m"
